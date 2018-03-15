@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-TWSE Stock Day Trading Data Crawler
-http://www.twse.com.tw/zh/page/trading/exchange/STOCK_DAY.html
+Stock price crawler for specific stock within specific time period
+
+Source: http://www.twse.com.tw/zh/page/trading/exchange/STOCK_DAY.html
 """
 
 ### Function
@@ -9,8 +10,11 @@ def stock_price_crawler(start_date = '', end_date = '', ticker_number = ''):
     
     """
     Format:
-        (1) start_date, end_date: string, 'year/month/day', such as '2018/10/10'
-        (2) ticker_number: string, valid ticker for TWSE, such as '2330'
+        1. Input:
+            (1) start_date, end_date: string, 'year/month/day', such as '2018/10/10'
+            (2) ticker_number: string, valid ticker for TWSE, such as '2330'
+        2. Output:
+            A dataframe in "pandas.core.frame.DataFrame" type, can be saved as a csv file
     """
     
     
@@ -56,15 +60,15 @@ def stock_price_crawler(start_date = '', end_date = '', ticker_number = ''):
     
     ### Set up the header
     header = {
-            'Accept':'application/json, text/javascript, */*; q=0.01',
-            'Accept-Encoding':'gzip, deflate',
-            'Accept-Language':'en-US,en;q=0.9',
-            'Connection':'keep-alive',
-            'Cookie':'_ga=GA1.3.2007553110.1520870985; _gid=GA1.3.1866316205.1520870985; JSESSIONID=9D13C651C61C1B100DEF4297FE763B2A; _gat=1',
-            'Host':'www.twse.com.tw',
-            'Referer':'http://www.twse.com.tw/zh/page/trading/exchange/STOCK_DAY.html',
-            'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36',
-            'X-Requested-With':'XMLHttpRequest'}
+            'Accept':'...',
+            'Accept-Encoding':'...',
+            'Accept-Language':'...',
+            'Connection':'...',
+            'Cookie':'...',
+            'Host':'...',
+            'Referer':'...',
+            'User-Agent':'...',
+            'X-Requested-With':'...'}
     
     ### Set up the crawling session and get data for each month involved
     session = requests.Session()
@@ -116,48 +120,4 @@ def stock_price_crawler(start_date = '', end_date = '', ticker_number = ''):
         print('There is no data during the time period specified')
     
     return data
-
-
-### Testing
-import pandas as pd
-TSMC_200803_201803 = stock_price_crawler('20080301', '20180301', '2330')   
-#TSMC_200803_201803.to_csv('D:/Google雲端硬碟/Project/Side_project_Securities_Analysis/data/TSMC_200803_201803.csv', encoding = 'utf8') 
-TSMC_200803_201803 = pd.read_csv('D:/Google雲端硬碟/Project/Side_project_Securities_Analysis/data/TSMC_200803_201803.csv', parse_dates = ['日期'], index_col = ['日期'])
-
-### Analysis
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-%matplotlib inline
-import matplotlib.font_manager as fm
-myfont = fm.FontProperties(fname='D:/Downloads/Microsoft_JH_6.12/msjh.ttc')
-import seaborn as sns
-
-TSMC_200803_201803['5_day_ma'] = pd.rolling_apply(TSMC_200803_201803['收盤價'], 5, np.mean)
-TSMC_200803_201803['10_day_ma'] = pd.rolling_apply(TSMC_200803_201803['收盤價'], 10, np.mean)
-TSMC_200803_201803['20_day_ma'] = pd.rolling_apply(TSMC_200803_201803['收盤價'], 20, np.mean)
-TSMC_200803_201803['60_day_ma'] = pd.rolling_apply(TSMC_200803_201803['收盤價'], 60, np.mean)
-TSMC_200803_201803['240_day_ma'] = pd.rolling_apply(TSMC_200803_201803['收盤價'], 240, np.mean)
-
-
-TSMC_200803_201803['Up_or_Down'] = TSMC_200803_201803.ix[:, ['收盤價', '10_day_ma', '60_day_ma','240_day_ma' ]].apply(lambda x: 1 if (x[0] > x[1])&(x[0] > x[2])&(x[0] > x[3]) else (-1 if (x[0] < x[1])&(x[0] < x[2])&(x[0] < x[3]) else 0),
-                  axis = 1)
-
-TSMC_200803_201803['Buy'] = TSMC_200803_201803['收盤價'] > TSMC_200803_201803['20_day_ma']
-
-plt.figure(figsize = [30, 10])
-(TSMC_200803_201803['收盤價'].shift(-1)/TSMC_200803_201803['收盤價']).cumprod().plot()
-
-plt.figure(figsize = [30, 10])
-sns.set_style("darkgrid")
-TSMC_200803_201803['收盤價'].plot()
-#TSMC_200803_201803['5_day_ma'].plot()
-#TSMC_200803_201803['10_day_ma'].plot()
-TSMC_200803_201803['10_day_ma'].plot()
-TSMC_200803_201803['60_day_ma'].plot()
-TSMC_200803_201803['240_day_ma'].plot()
-plt.xlabel('時間', fontproperties=myfont)
-plt.ylabel('價格', fontproperties=myfont)
-plt.legend(prop = myfont)
-
 
