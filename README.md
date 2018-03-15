@@ -5,5 +5,5 @@ This project aims to build several financially-related data analysis work, inclu
 
 ## Some Examples
 
-<img src="https://github.com/lwkuant/Side_project_Securities_Analysis/blob/master/visualization/example_20080301_20180301.png">
+<img src="https://github.com/lwkuant/Side_project_Securities_Analysis/blob/master/Visualization/example_20080301_20180301.png">
 
