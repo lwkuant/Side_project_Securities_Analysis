@@ -51,26 +51,19 @@ def stock_price_crawler(start_date = '', end_date = '', ticker_number = ''):
         return 'Please enter the valid date.'
         
     ### Get the date list for each month involved
-    colnames = ["日期","成交股數","成交金額","開盤價","最高價","最低價","收盤價","漲跌價差","成交筆數"]
     date_list = sorted(list(set([''.join([str(int(str(x).split('-')[0])), str(x).split('-')[1]])+'01' for x in pd.date_range(start_date, end_date)])))
-    bar_length = 100
     
     ### Initialize the list for putting data crawled
     data_list = []
     
     ### Set up the header
     header = {
-            'Accept':'...',
-            'Accept-Encoding':'...',
-            'Accept-Language':'...',
-            'Connection':'...',
-            'Cookie':'...',
-            'Host':'...',
-            'Referer':'...',
-            'User-Agent':'...',
-            'X-Requested-With':'...'}
+            'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
+            }
     
     ### Set up the crawling session and get data for each month involved
+    colnames = ["日期","成交股數","成交金額","開盤價","最高價","最低價","收盤價","漲跌價差","成交筆數"]
+    bar_length = 100
     session = requests.Session()
     for ind, date in enumerate(date_list):
         page = session.get('http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=' + date + '&stockNo=' + ticker_number, headers = header).text
@@ -121,3 +114,5 @@ def stock_price_crawler(start_date = '', end_date = '', ticker_number = ''):
     
     return data
 
+df_tsmc = stock_price_crawler('1994/09/01', '2018/03/23', '2330')
+df_tsmc.to_csv('D:/Google雲端硬碟/Project/Side_project_Securities_Analysis/data/TSMC_to_20180323.csv')
